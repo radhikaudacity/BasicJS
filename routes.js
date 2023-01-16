@@ -50,45 +50,43 @@ const distances = [
   },
 ];
 
-const getTwoStopsAr = (multipleStopsAr) => {
-  return multipleStopsAr.reduce(
-    (accumulator, currentValue, currentIndex, array) => {
-      if (currentIndex !== multipleStopsAr.length - 1) {
-        accumulator.push(array.slice(currentIndex, currentIndex + 2));
-      }
-      return accumulator;
-    },
+const getLegs = (multipleStopsAr) =>
+  multipleStopsAr.reduce(
+    (accumulator, currentValue, currentIndex, array) =>
+      currentIndex !== multipleStopsAr.length - 1
+        ? [...accumulator, array.slice(currentIndex, currentIndex + 2)]
+        : accumulator,
     []
   );
-};
-const findStations = (stations) => {
-  return (item) => item.start === stations[0] && item.end === stations[1];
-};
 
-const addSubRoutes = () => {
+const findStations = (stations) => (item) =>
+  item.start === stations[0] && item.end === stations[1];
+
+const addSubRoutes = (routes) =>
   routes.map((route, index) => {
-    const twoStopsAr = getTwoStopsAr(route.stops);
-    route.subRoutes = twoStopsAr.map((stations) =>
-      distances.find(findStations(stations))
-    );
-    addTotalDistance(route.subRoutes, index);
+    const legs = getLegs(route.stops);
+
+    return {
+      ...route,
+      subRoutes: legs.map((stations) => distances.find(findStations(stations))),
+    };
   });
 
-  return routes;
+const addTotalDistance = (routes) =>
+  routes.map((route) => ({
+    ...route,
+    totalDistance: route.subRoutes.reduce(
+      (acc, value) => acc + value.distance,
+      0
+    ),
+  }));
+
+const displayTotalRoutes = (routes) => console.table(routes);
+
+const main = (routes) => {
+  const withSubRoutes = addSubRoutes(routes);
+  const distanceAddedRoutes = addTotalDistance(withSubRoutes);
+  displayTotalRoutes(distanceAddedRoutes);
 };
 
-const addTotalDistance = (subRoutes, i) => {
-  return (routes[i].totalDistance = subRoutes.reduce(
-    (acc, value) => acc + value.distance,
-    0
-  ));
-};
-const displayTotalRoutes = () => {
-  addSubRoutes();
-  console.table(routes);
-  routes.map((route) => console.table(route.subRoutes));
-};
-const main = () => {
-  displayTotalRoutes();
-};
-main();
+main(routes);
