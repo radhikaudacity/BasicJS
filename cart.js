@@ -40,11 +40,11 @@ const getUnitPrice = (itemName) => rates[itemName] || 0;
 const getLineItemPrice = (lineItem) =>
   lineItem.units * getUnitPrice(lineItem.item) || 0;
 
-const getLineItemTotal = (partialSum, purchase) => {
+const getLineItemTotal = (acc, purchase) => {
   const lineItemPrice = getLineItemPrice(purchase);
 
   return (
-    partialSum +
+    acc +
     lineItemPrice -
     lineItemPrice * getDiscountPercent(purchase.item) +
     lineItemPrice * getTaxPercent(purchase.item)
