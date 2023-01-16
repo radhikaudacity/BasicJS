@@ -12,7 +12,7 @@ const accounts = [
     accountNo: '003',
   },
 ];
-let balances = {
+const balances = {
   // accountNo: balance
   '001': 5000,
   '002': 2000,
@@ -52,40 +52,35 @@ const transactions = [
   },
 ];
 
-const getTransactions = (accNo) => {
-  const transArr = transactions.filter((transaction) => {
-    console.log(accNo, transaction.accountNo);
-    return transaction.type === 'withdrawal';
-  });
-};
-const getBalance = (accNo) => {
-  return balances[accNo];
-};
-const displayAccountsBeforeTransaction = () => {
-  accounts.map((account) => {
-    account.balance = getBalance(account.accountNo);
-    console.log(account);
-    console.log(getTransactions(account.accountNo));
-    // console.log(getBalance(account.accountNo));
-  });
-};
-const displayAccountsAfterTransaction = () => {
-  accounts.map((account) => {
-    account.balance = getBalance(account.accountNo);
-    console.log(account);
-    // console.log(getBalance(account.accountNo));
-  });
+const getBalance = (accNo, balances) => balances[accNo];
+
+const displayAccountsDetails = (accounts, balances) => {
+  const accountDetails = accounts.map((account) => ({
+    ...account,
+    balance: getBalance(account.accountNo, balances),
+  }));
+  console.table(accountDetails);
 };
 
-displayAccountsBeforeTransaction();
-/*
+const impacts = { withdrawal: -1, deposit: 1 };
 
-displayTotal
-[
-    { name: 'Arun', accountNo: '001', balance: 5000 },
-    { name: 'Babu', accountNo: '002', balance: 2000 },
-    { name: 'Chandra', accountNo: '003', balance: 0 }
-  ]
-  after transaction
+const updateBalances = (balances, transactions) => {
+  let newBalances = { ...balances };
+  transactions.map(
+    ({ amount, type, accountNo }) =>
+      (newBalances[accountNo] += amount * impacts[type])
+  );
 
-  */
+  return newBalances;
+};
+
+const main = () => {
+  console.log('Balances before transactions');
+  displayAccountsDetails(accounts, balances);
+  const updatedBalances = updateBalances(balances, transactions);
+
+  console.log('Balances after transactions');
+  displayAccountsDetails(accounts, updatedBalances);
+};
+
+main();
