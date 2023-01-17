@@ -62,11 +62,11 @@ const getLegs = (multipleStopsAr) =>
     []
   );
 
-const findStations = (stations) => (item, index) =>
+const findStations = (stations) => (item) =>
   (item.start === stations[0] && item.end === stations[1]) ||
   (item.start === stations[1] && item.end === stations[0]);
 
-const addSubRoutes = (routes) =>
+const addSubRoutes = (routes, distances) =>
   routes.map((route) => {
     const legs = getLegs(route.stops);
 
@@ -87,11 +87,10 @@ const addTotalDistance = (routes) =>
 
 const displayTotalRoutes = (routes) => console.table(routes);
 
-const main = (routes) => {
-  const withSubRoutes = addSubRoutes(routes);
-  console.log(withSubRoutes.map((route) => route.subRoutes));
+const main = (routes, distances) => {
+  const withSubRoutes = addSubRoutes(routes, distances);
   const distanceAddedRoutes = addTotalDistance(withSubRoutes);
   displayTotalRoutes(distanceAddedRoutes);
 };
 
-main(routes);
+main(routes, distances);
