@@ -1,14 +1,17 @@
 routes = [
   {
-    route: 'chennai-trichy',
+    start: 'chennai',
+    end: 'trichy',
     stops: ['chennai', 'viluppuram', 'trichy'],
   },
   {
-    route: 'chennai-karur',
+    start: 'chennai',
+    end: 'karur',
     stops: ['chennai', 'viluppuram', 'trichy', 'karur'],
   },
   {
-    route: 'trichy-tirunelveli',
+    start: 'trichy',
+    end: 'tirunelveli',
     stops: ['trichy', 'madurai', 'tirunelveli'],
   },
 ];
@@ -24,8 +27,8 @@ const distances = [
     distance: 166,
   },
   {
-    start: 'viluppuram',
-    end: 'trichy',
+    start: 'trichy',
+    end: 'viluppuram',
     distance: 165,
   },
   {
@@ -59,11 +62,12 @@ const getLegs = (multipleStopsAr) =>
     []
   );
 
-const findStations = (stations) => (item) =>
-  item.start === stations[0] && item.end === stations[1];
+const findStations = (stations) => (item, index) =>
+  (item.start === stations[0] && item.end === stations[1]) ||
+  (item.start === stations[1] && item.end === stations[0]);
 
 const addSubRoutes = (routes) =>
-  routes.map((route, index) => {
+  routes.map((route) => {
     const legs = getLegs(route.stops);
 
     return {
@@ -85,6 +89,7 @@ const displayTotalRoutes = (routes) => console.table(routes);
 
 const main = (routes) => {
   const withSubRoutes = addSubRoutes(routes);
+  console.log(withSubRoutes.map((route) => route.subRoutes));
   const distanceAddedRoutes = addTotalDistance(withSubRoutes);
   displayTotalRoutes(distanceAddedRoutes);
 };
