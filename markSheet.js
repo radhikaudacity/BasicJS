@@ -1,6 +1,6 @@
 const markSheets = [
   {
-    student: 'Sriram',
+    student: 'Sriramraj',
     rollNo: 11,
     marks: {
       tamil: 80,
